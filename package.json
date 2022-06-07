@@ -4,5 +4,12 @@
   "main": "index.js",
   "repository": "https://github.com/luizphelip3/CRUD-NodeJs.git",
   "author": "luizphelip3 <luiz_phelip3@hotmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "dev": "clear && nodemon src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.16"
+  }
 }
