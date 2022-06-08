@@ -67,7 +67,7 @@ app.post("/account", (req, res) => {
   });
 
   // retorna como status o código 201 - created -  e também o novo costumer
-  return res.status(201).send(customers);
+  return res.status(201).json(customers);
 });
 
 // método GET user by cpf
@@ -76,9 +76,27 @@ app.get("/statement/", verifyIfExistsAccountCPF, (req, res) => {
   const { customer } = req;
 
   // retorno o statement do usuário caso o usuário seja encontrado
-  // passandos pelo middleware
-  return res.json({ message: `Customer statement is: ${customer.statement}` });
+  // passando pelo middleware
+  return res.json(customer.statement);
 });
+
+app.post("/deposit", verifyIfExistsAccountCPF, (req, res) =>{
+
+  const { description, amount } = req.body;
+
+  const { customer } = req;
+
+  const statementOperation = {
+    description,
+    amount,
+    created_at: new Date(),
+    type:"credit"
+  }
+
+  customer.statement.push(statementOperation)
+
+  return res.status(201).send(`Deposit successfully made! Data: ${JSON.stringify(statementOperation)}`)
+})
 
 // inicia a aplicação na porta 3333
 app.listen(3333);
