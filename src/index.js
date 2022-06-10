@@ -1,4 +1,3 @@
-const { response } = require("express");
 const express = require("express");
 
 // importação do v4 da uuid, utilizamos a função v4 para gerar um uuid aleatório
@@ -41,6 +40,17 @@ function verifyIfExistsAccountCPF(req, res, next) {
   return next();
 }
 
+function getBalance(statement) {
+  const balance = statement.reduce((acc, operation) => {
+    if (operation.type === "credit") {
+      return acc += operation.amount;
+    } else {
+      return acc - operation.amount;
+    }
+  }, 0);
+  return balance - 0;
+}
+
 // método de criação de usuário
 app.post("/account", (req, res) => {
   // desestruturação do objeto passando pelo body
@@ -80,8 +90,7 @@ app.get("/statement/", verifyIfExistsAccountCPF, (req, res) => {
   return res.json(customer.statement);
 });
 
-app.post("/deposit", verifyIfExistsAccountCPF, (req, res) =>{
-
+app.post("/deposit", verifyIfExistsAccountCPF, (req, res) => {
   const { description, amount } = req.body;
 
   const { customer } = req;
@@ -90,13 +99,42 @@ app.post("/deposit", verifyIfExistsAccountCPF, (req, res) =>{
     description,
     amount,
     created_at: new Date(),
-    type:"credit"
+    type: "credit",
+  };
+
+  customer.statement.push(statementOperation);
+
+  const balance = getBalance(customer.statement);
+
+  return res.status(201).json({
+    message: `Deposit successfully made! Your new balance is: ${balance}`,
+  });
+});
+
+app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
+  const { amount } = req.body;
+
+  const { customer } = req;
+
+  const balance = getBalance(customer.statement);
+  
+
+  if (balance < amount) {
+    res.status(400).json({ error: "Insufficient funds!" });
   }
 
-  customer.statement.push(statementOperation)
+  const statementOperation = {
+    amount,
+    created_at: new Date(),
+    type: "debit",
+  };
 
-  return res.status(201).send(`Deposit successfully made! Data: ${JSON.stringify(statementOperation)}`)
-})
+  customer.statement.push(statementOperation);
+
+  console.log(balance);
+
+  return res.status(201).send();
+});
 
 // inicia a aplicação na porta 3333
 app.listen(3333);
