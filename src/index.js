@@ -178,5 +178,18 @@ app.get("/account", verifyIfExistsAccountCPF, (req, res) => {
   return res.status(201).send(customer);
 });
 
+app.delete("/account", verifyIfExistsAccountCPF, (req, res) => {
+  const { customer } = req;
+
+  // splice function serve para apagar um dado de dentro do array e recebe
+  // dois parâmetros: onde vai iniciar e onde vai parar
+  // passei o próprio customer encontrado como parâmetro de início da função
+  // e passei como segundo parâmetro o próximo índice de dentro do array de customers
+  
+  customers.splice(customer, 1);
+
+  return res.status(201).send();
+});
+
 // inicia a aplicação na porta 3333
 app.listen(3333);
