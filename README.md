@@ -19,3 +19,6 @@
 - Não deve ser possível fazer saque em uma conta não existente.
 - Não deve ser possível excluir uma conta não existente.
 - Não deve ser possível fazer saque quando o saldo for insuficiente.
+
+# Para quê serve esse projeto?
+- Utilizei para documentar meu andamento durante o curso do Ignite. Além de praticar conceitos básicos de CRUD e HTTPRequests.
