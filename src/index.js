@@ -138,5 +138,27 @@ app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
   return res.status(201).send();
 });
 
+app.get("/statement/date", verifyIfExistsAccountCPF, (req, res) => {
+  // busco o customer com base no retorno do middleware
+  const { customer } = req;
+
+  const { date } = req.query;
+
+  // a data é MM/DD/AAAA
+  const dateFormat = new Date(date + " 00:00");
+
+  const statement = customer.statement.filter(
+    (statement) =>
+      statement.created_at.toDateString() ===
+      new Date(dateFormat).toDateString()
+  );
+
+  if(statement.length < 1){
+    return res.status(404).json({error: 'No data has found using this date params!'})
+  }
+
+  return res.json(statement);
+});
+
 // inicia a aplicação na porta 3333
 app.listen(3333);
