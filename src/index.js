@@ -153,11 +153,29 @@ app.get("/statement/date", verifyIfExistsAccountCPF, (req, res) => {
       new Date(dateFormat).toDateString()
   );
 
-  if(statement.length < 1){
-    return res.status(404).json({error: 'No data has found using this date params!'})
+  if (statement.length < 1) {
+    return res
+      .status(404)
+      .json({ error: "No data has found using this date params!" });
   }
 
   return res.json(statement);
+});
+
+app.put("/account", verifyIfExistsAccountCPF, (req, res) => {
+  const { name } = req.body;
+
+  const { customer } = req;
+
+  customer.name = name;
+
+  return res.status(201).send(customer);
+});
+
+app.get("/account", verifyIfExistsAccountCPF, (req, res) => {
+  const { customer } = req;
+
+  return res.status(201).send(customer);
 });
 
 // inicia a aplicação na porta 3333
