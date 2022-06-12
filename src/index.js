@@ -185,11 +185,19 @@ app.delete("/account", verifyIfExistsAccountCPF, (req, res) => {
   // dois parâmetros: onde vai iniciar e onde vai parar
   // passei o próprio customer encontrado como parâmetro de início da função
   // e passei como segundo parâmetro o próximo índice de dentro do array de customers
-  
+
   customers.splice(customer, 1);
 
   return res.status(201).send();
 });
+
+app.get('/balance', verifyIfExistsAccountCPF, (req, res) =>{
+  const {customer} = req;
+
+  const balance = getBalance(customer.statement)
+
+  return res.status(200).json(balance)
+})
 
 // inicia a aplicação na porta 3333
 app.listen(3333);
