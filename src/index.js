@@ -43,7 +43,7 @@ function verifyIfExistsAccountCPF(req, res, next) {
 function getBalance(statement) {
   const balance = statement.reduce((acc, operation) => {
     if (operation.type === "credit") {
-      return acc += operation.amount;
+      return (acc += operation.amount);
     } else {
       return acc - operation.amount;
     }
@@ -106,6 +106,12 @@ app.post("/deposit", verifyIfExistsAccountCPF, (req, res) => {
 
   const balance = getBalance(customer.statement);
 
+  if (balance === 0) {
+    return res.status(201).json({
+      message: `Deposit successfully made! Your new balance is: ${balance}, because it was negative.`,
+    });
+  }
+
   return res.status(201).json({
     message: `Deposit successfully made! Your new balance is: ${balance}`,
   });
@@ -117,7 +123,6 @@ app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
   const { customer } = req;
 
   const balance = getBalance(customer.statement);
-  
 
   if (balance < amount) {
     res.status(400).json({ error: "Insufficient funds!" });
@@ -130,9 +135,6 @@ app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
   };
 
   customer.statement.push(statementOperation);
-
-  console.log(balance);
-
   return res.status(201).send();
 });
 
